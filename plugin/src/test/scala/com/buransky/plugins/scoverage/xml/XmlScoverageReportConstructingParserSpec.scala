@@ -52,9 +52,9 @@ class XmlScoverageReportConstructingParserSpec extends FlatSpec with Matchers {
 
     val projectChildren = projectCoverage.children.toList
     projectChildren.length should equal(1)
-    projectChildren(0) shouldBe a [DirectoryStatementCoverage]
+    projectChildren.head shouldBe a [DirectoryStatementCoverage]
 
-    val aaa = projectChildren(0).asInstanceOf[DirectoryStatementCoverage]
+    val aaa = projectChildren.head.asInstanceOf[DirectoryStatementCoverage]
     aaa.name should equal("aaa")
     checkRate(24.53, aaa.rate)
 
@@ -67,8 +67,8 @@ class XmlScoverageReportConstructingParserSpec extends FlatSpec with Matchers {
     errorCode.statementCount should equal (46)
     errorCode.coveredStatementsCount should equal (13)
 
-    aaaChildren(0) shouldBe a [FileStatementCoverage]
-    val graph = aaaChildren(0).asInstanceOf[FileStatementCoverage]
+    aaaChildren.head shouldBe a [FileStatementCoverage]
+    val graph = aaaChildren.head.asInstanceOf[FileStatementCoverage]
     graph.name should equal("Graph.scala")
     graph.statementCount should equal (7)
     graph.coveredStatementsCount should equal (0)

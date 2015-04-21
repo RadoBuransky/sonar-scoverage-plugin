@@ -26,6 +26,20 @@ import java.io.File
  * @author Rado Buransky
  */
 object PathUtil {
-  def splitPath(filePath: String, separator: String = File.separator): List[String] =
-    filePath.split(separator.replaceAllLiterally("\\", "\\\\")).toList
+  def splitPath(filePath: String, separator: String = File.separator): List[String] = {
+    val file = new File(filePath)
+    if (file.isAbsolute && file.exists()) {
+      val path = splitFilePath(filePath, separator).filter(_ != "")
+      path.update(0, File.separator + path.head)
+      path.toList
+    } else if (filePath.startsWith("/")) {
+      splitFilePath(filePath, separator).toList.drop(1)
+    } else {
+      splitFilePath(filePath, separator).toList
+    }
+  }
+
+  private def splitFilePath(filePath: String, separator: String): Array[String] = {
+    filePath.split(separator.replaceAllLiterally("\\", "\\\\"))
+  }
 }

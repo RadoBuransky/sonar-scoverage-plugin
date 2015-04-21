@@ -61,7 +61,7 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
   override def elemStart(pos: Int, pre: String, label: String, attrs: MetaData, scope: NamespaceBinding) {
     label match {
       case CLASS_ELEMENT => {
-        currentFilePath = Some(fixLeadingSlash(getText(attrs, FILENAME_ATTRIBUTE)))
+        currentFilePath = Some(getText(attrs, FILENAME_ATTRIBUTE))
         log.debug("Current file path: " + currentFilePath.get)
       }
       case STATEMENT_ELEMENT => {
@@ -93,26 +93,15 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
     }
   }
 
-  /**
-   * Remove this when scoverage is fixed!
-   */
-  private def fixLeadingSlash(filePath: String) = {
-    if (filePath.startsWith(File.separator))
-      filePath.drop(File.separator.length)
-    else
-      filePath
-  }
-
   private def getInt(attrs: MetaData, name: String) = getText(attrs, name).toInt
 
   private def getText(attrs: MetaData, name: String): String = {
     attrs.get(name) match {
-      case Some(attr) => {
+      case Some(attr) =>
         attr match {
-          case text: Text => text.toString
+          case text: Text => text.toString()
           case _ => throw new ScoverageException("Not a text attribute!")
         }
-      }
       case None =>  throw new ScoverageException("Attribute doesn't exit! [" + name + "]")
     }
   }
@@ -168,7 +157,7 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
 
     // Merge chains into one tree
     val root = DirOrFile("", Nil, None)
-    chained.foreach(root.add(_))
+    chained.foreach(root.add)
 
     // Transform file system tree into coverage structure tree
     root.toProjectStatementCoverage
@@ -194,12 +183,11 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
     if (dirs.isEmpty) {
       // File in root dir
       file
-    }
-    else {
+    } else {
       // Append file
       dirs.last.children = List(file)
 
-      dirs(0)
+      dirs.head
     }
   }
 
