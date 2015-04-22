@@ -70,12 +70,12 @@
 
     <properties>
         <sonar.version>4.5.4</sonar.version>
-
         <sonar.pluginKey>scoverage</sonar.pluginKey>
         <sonar.pluginName>Scoverage</sonar.pluginName>
         <sonar.pluginClass>com.buransky.plugins.scoverage.ScoveragePlugin</sonar.pluginClass>
 
-        <scala.version>2.10.0</scala.version>
+        <scala.full.version>2.11.4</scala.full.version>
+        <scala.version>2.11</scala.version>
     </properties>
 
     <dependencies>
@@ -91,14 +91,19 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
+            <version>${scala.full.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-xml_${scala.version}</artifactId>
+            <version>1.0.3</version>
         </dependency>
 
         <!-- Unit tests -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
-            <version>2.0</version>
+            <artifactId>scalatest_${scala.version}</artifactId>
+            <version>2.2.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -42,15 +42,15 @@ class ScoverageSensorSpec extends FlatSpec with Matchers with MockitoSugar {
   behavior of "shouldExecuteOnProject"
 
   it should "succeed for Scala project" in new ShouldExecuteOnProject {
-    checkShouldExecuteOnProject(List("scala"), true)
+    checkShouldExecuteOnProject(List("scala"), expectedResult = true)
   }
 
   it should "succeed for mixed projects" in new ShouldExecuteOnProject {
-    checkShouldExecuteOnProject(List("scala", "java"), true)
+    checkShouldExecuteOnProject(List("scala", "java"), expectedResult = true)
   }
 
   it should "fail for Java project" in new ShouldExecuteOnProject {
-    checkShouldExecuteOnProject(List("java"), false)
+    checkShouldExecuteOnProject(List("java"), expectedResult = false)
   }
 
   class ShouldExecuteOnProject extends ScoverageSensorScope {
