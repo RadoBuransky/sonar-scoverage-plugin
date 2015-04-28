@@ -21,7 +21,6 @@ package com.buransky.plugins.scoverage.sensor
 
 import java.util
 
-import com.buransky.plugins.scoverage.language.Scala
 import com.buransky.plugins.scoverage.{ProjectStatementCoverage, ScoverageReportParser}
 import org.junit.runner.RunWith
 import org.mockito.Mockito._
@@ -98,10 +97,9 @@ class ScoverageSensorSpec extends FlatSpec with Matchers with MockitoSugar {
   }
 
   class ScoverageSensorScope extends {
-    val scala = new Scala
     val settings = mock[Settings]
     val pathResolver = mock[PathResolver]
     val fileSystem = mock[FileSystem]
-  } with ScoverageSensor(settings, pathResolver, fileSystem, scala)
+  } with ScoverageSensor(settings, pathResolver, fileSystem)
 
 }

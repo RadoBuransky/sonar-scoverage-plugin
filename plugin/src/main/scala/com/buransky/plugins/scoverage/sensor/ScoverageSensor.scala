@@ -41,14 +41,14 @@ import scala.collection.JavaConversions._
  *
  * @author Rado Buransky
  */
-class ScoverageSensor(settings: Settings, pathResolver: PathResolver, fileSystem: FileSystem, scala: Scala)
+class ScoverageSensor(settings: Settings, pathResolver: PathResolver, fileSystem: FileSystem)
   extends Sensor with CoverageExtension {
   private val log = LoggerFactory.getLogger(classOf[ScoverageSensor])
   protected val SCOVERAGE_REPORT_PATH_PROPERTY = "sonar.scoverage.reportPath"
   protected lazy val scoverageReportParser: ScoverageReportParser = XmlScoverageReportParser()
 
   override def shouldExecuteOnProject(project: Project): Boolean =
-    project.getAnalysisType.isDynamic(true) && fileSystem.languages().contains(scala.getKey)
+    project.getAnalysisType.isDynamic(true) && fileSystem.languages().contains(Scala.key)
 
   override def analyse(project: Project, context: SensorContext) {
     scoverageReportPath match {
@@ -149,7 +149,7 @@ class ScoverageSensor(settings: Settings, pathResolver: PathResolver, fileSystem
 
     val p = fileSystem.predicates()
     val files = fileSystem.inputFiles(
-      p.and(p.or(p.matchesPathPattern("**/" + filePath), p.hasPath(filePath)), p.hasLanguage(scala.getKey), p.hasType(InputFile.Type.MAIN))
+      p.and(p.or(p.matchesPathPattern("**/" + filePath), p.hasPath(filePath)), p.hasLanguage(Scala.key), p.hasType(InputFile.Type.MAIN))
     )
 
     files.headOption match {
