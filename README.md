@@ -23,13 +23,13 @@ just plain average of coverage rates for sub-projects.
 ## Requirements ##
 
 - [SonarQube] 4.5.4
-- [Sonar-Scala] 1.0.0
+- [sonar-scala] 1.0.0
 - [Scoverage] 1.1.0
 
 ## Installation ##
 
 Download and copy [sonar-scoverage-plugin-1.1.1.jar] [LatestPluginJar] to the Sonar plugins directory
-(usually <SONAR_INSTALLATION_ROOT>/extensions/plugins). Restart Sonar.
+(usually <SONAR_INSTALLATION_ROOT>/extensions/plugins). Restart Sonar. Be sure that you have also [sonar-scala] plugin installed.
 
 ### Support for older versions of Sonar ###
 
@@ -97,6 +97,7 @@ Source code markup with covered and uncovered lines:
 -
 -- Upgrade to SonarQube 4.5.4 API
 -- Path fixes
+-- TO be used together with Scala Sonar plugin
 -
 -### 1.1.0 - 23 Sep 2014 ###
 -
@@ -106,6 +107,7 @@ Source code markup with covered and uncovered lines:
 -[LatestPluginJar]: https://github.com/RadoBuransky/sonar-scoverage-plugin/releases/download/1.1.1/sonar-scoverage-plugin-1.1.1.jar
 -[Plugin102Jar]: https://github.com/RadoBuransky/sonar-scoverage-plugin/releases/download/1.0.2/sonar-scoverage-plugin-1.0.2.jar
 -[SonarQube]: http://www.sonarqube.org/ "SonarQube"
+-[sonar-scala] https://github.com/SonarCommunity/sonar-scala
 -[Scoverage]: https://github.com/scoverage/scalac-scoverage-plugin "Scoverage"
 -[sbt-scoverage]: https://github.com/scoverage/sbt-scoverage
 -[scoverage-maven-plugin]: https://github.com/scoverage/scoverage-maven-plugin
