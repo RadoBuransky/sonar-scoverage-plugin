@@ -26,7 +26,6 @@ import scala.xml.{Text, NamespaceBinding, MetaData}
 import org.apache.log4j.Logger
 import scala.collection.mutable
 import scala.annotation.tailrec
-import java.io.File
 import com.buransky.plugins.scoverage.util.PathUtil
 
 /**
@@ -48,7 +47,7 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
   var currentFilePath: Option[String] = None
 
   def parse(): ProjectStatementCoverage = {
-    // Initialze
+    // Initialize
     nextch()
 
     // Parse
@@ -60,26 +59,22 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
 
   override def elemStart(pos: Int, pre: String, label: String, attrs: MetaData, scope: NamespaceBinding) {
     label match {
-      case CLASS_ELEMENT => {
-        currentFilePath = Some(fixLeadingSlash(getText(attrs, FILENAME_ATTRIBUTE)))
+      case CLASS_ELEMENT =>
+        currentFilePath = Some(getText(attrs, FILENAME_ATTRIBUTE))
         log.debug("Current file path: " + currentFilePath.get)
-      }
-      case STATEMENT_ELEMENT => {
+      case STATEMENT_ELEMENT =>
         currentFilePath match {
-          case Some(cfp) => {
+          case Some(cfp) =>
             val start = getInt(attrs, START_ATTRIBUTE)
             val line = getInt(attrs, LINE_ATTRIBUTE)
             val hits = getInt(attrs, INVOCATION_COUNT_ATTRIBUTE)
-
             // Add covered statement to the mutable map
             val pos = StatementPosition(line, start)
             addCoveredStatement(cfp, CoveredStatement(pos, pos, hits))
-
             log.debug("Statement added: " + line + ", " + hits + ", " + start)
-          }
+
           case None => throw new ScoverageException("Current file path not set!")
         }
-      }
       case _ => // Nothing to do
     }
 
@@ -93,26 +88,15 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
     }
   }
 
-  /**
-   * Remove this when scoverage is fixed!
-   */
-  private def fixLeadingSlash(filePath: String) = {
-    if (filePath.startsWith(File.separator))
-      filePath.drop(File.separator.length)
-    else
-      filePath
-  }
-
   private def getInt(attrs: MetaData, name: String) = getText(attrs, name).toInt
 
   private def getText(attrs: MetaData, name: String): String = {
     attrs.get(name) match {
-      case Some(attr) => {
+      case Some(attr) =>
         attr match {
-          case text: Text => text.toString
+          case text: Text => text.toString()
           case _ => throw new ScoverageException("Not a text attribute!")
         }
-      }
       case None =>  throw new ScoverageException("Attribute doesn't exit! [" + name + "]")
     }
   }
@@ -125,17 +109,15 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
     final def add(chain: DirOrFile) {
       get(chain.name) match {
         case None => children = chain :: children
-        case Some(child) => {
+        case Some(child) =>
           chain.children match {
-            case h :: t => {
+            case h :: t =>
               if (t != Nil)
                 throw new IllegalStateException("This is not a linear chain!")
 
               child.add(h)
-            }
             case _ => // Duplicate file? Should not happen.
           }
-        }
       }
     }
 
@@ -168,7 +150,7 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
 
     // Merge chains into one tree
     val root = DirOrFile("", Nil, None)
-    chained.foreach(root.add(_))
+    chained.foreach(root.add)
 
     // Transform file system tree into coverage structure tree
     root.toProjectStatementCoverage
@@ -194,12 +176,11 @@ class XmlScoverageReportConstructingParser(source: Source) extends ConstructingP
     if (dirs.isEmpty) {
       // File in root dir
       file
-    }
-    else {
+    } else {
       // Append file
       dirs.last.children = List(file)
 
-      dirs(0)
+      dirs.head
     }
   }
 

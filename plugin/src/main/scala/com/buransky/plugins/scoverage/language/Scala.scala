@@ -19,17 +19,6 @@
  */
 package com.buransky.plugins.scoverage.language
 
-import org.sonar.api.resources.AbstractLanguage
-
-/**
- * Scala language.
- *
- * @author Rado Buransky
- */
-class Scala extends AbstractLanguage(Scala.key, Scala.name) {
-  val getFileSuffixes = Array(Scala.fileExtension)
-}
-
 object Scala {
   val key = "scala"
   val name = "Scala"

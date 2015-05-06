@@ -21,7 +21,6 @@ package com.buransky.plugins.scoverage.sensor
 
 import java.util
 
-import com.buransky.plugins.scoverage.language.Scala
 import com.buransky.plugins.scoverage.{ProjectStatementCoverage, ScoverageReportParser}
 import org.junit.runner.RunWith
 import org.mockito.Mockito._
@@ -42,15 +41,15 @@ class ScoverageSensorSpec extends FlatSpec with Matchers with MockitoSugar {
   behavior of "shouldExecuteOnProject"
 
   it should "succeed for Scala project" in new ShouldExecuteOnProject {
-    checkShouldExecuteOnProject(List("scala"), true)
+    checkShouldExecuteOnProject(List("scala"), expectedResult = true)
   }
 
   it should "succeed for mixed projects" in new ShouldExecuteOnProject {
-    checkShouldExecuteOnProject(List("scala", "java"), true)
+    checkShouldExecuteOnProject(List("scala", "java"), expectedResult = true)
   }
 
   it should "fail for Java project" in new ShouldExecuteOnProject {
-    checkShouldExecuteOnProject(List("java"), false)
+    checkShouldExecuteOnProject(List("java"), expectedResult = false)
   }
 
   class ShouldExecuteOnProject extends ScoverageSensorScope {
@@ -98,10 +97,9 @@ class ScoverageSensorSpec extends FlatSpec with Matchers with MockitoSugar {
   }
 
   class ScoverageSensorScope extends {
-    val scala = new Scala
     val settings = mock[Settings]
     val pathResolver = mock[PathResolver]
     val fileSystem = mock[FileSystem]
-  } with ScoverageSensor(settings, pathResolver, fileSystem, scala)
+  } with ScoverageSensor(settings, pathResolver, fileSystem)
 
 }
