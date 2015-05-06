@@ -23,7 +23,8 @@ just plain average of coverage rates for sub-projects.
 ## Requirements ##
 
 - [SonarQube] 4.5.4
-- [Scoverage] 0.95.7
+- [Sonar-Scala] 1.0.0
+- [Scoverage] 1.1.0
 
 ## Installation ##
 
@@ -38,7 +39,7 @@ Download and copy [sonar-scoverage-plugin-1.1.1.jar] [LatestPluginJar] to the So
 ## Configure Sonar runner ##
 
 Set location of the **scoverage.xml** file in the **sonar-project.properties** located in your project's
-root directory:
+root directory, e.g.:
 
     ...
     sonar.scoverage.reportPath=target/scala-2.10/scoverage-report/scoverage.xml
@@ -54,6 +55,10 @@ generate the Scoverage report by executing following from command line:
 And then run Sonar runner to upload the report to the Sonar server:
 
     $ sonar-runner
+
+## Run scoverage with Maven
+
+If your project is based on Maven then check [scoverage-maven-plugin].
 
 ## Add statement coverage columns ##
 
@@ -86,3 +91,23 @@ Columns with statement coverage, total number of statements and number of covere
 Source code markup with covered and uncovered lines:
 ![Source code markup](/doc/img/04_coverage.png "Source code markup")
 
+-## Changelog ##
+-
+-### 1.1.1 - 06 May 2015 ###
+-
+-- Upgrade to SonarQube 4.5.4 API
+-- Path fixes
+-
+-### 1.1.0 - 23 Sep 2014 ###
+-
+-- Upgrade to SonarQube 4.2 API
+-- Upgrade scoverage to 1.1.0
+-
+-[LatestPluginJar]: https://github.com/RadoBuransky/sonar-scoverage-plugin/releases/download/1.1.1/sonar-scoverage-plugin-1.1.1.jar
+-[Plugin102Jar]: https://github.com/RadoBuransky/sonar-scoverage-plugin/releases/download/1.0.2/sonar-scoverage-plugin-1.0.2.jar
+-[SonarQube]: http://www.sonarqube.org/ "SonarQube"
+-[Scoverage]: https://github.com/scoverage/scalac-scoverage-plugin "Scoverage"
+-[sbt-scoverage]: https://github.com/scoverage/sbt-scoverage
+-[scoverage-maven-plugin]: https://github.com/scoverage/scoverage-maven-plugin
+-[Plugin351]: https://github.com/RadoBuransky/sonar-scoverage-plugin/tree/sonar3.5.1
+-[Plugin351Jar]: https://github.com/RadoBuransky/sonar-scoverage-plugin/releases/download/v1.0.2-Sonar3.5.1/sonar-scoverage-plugin-sonar3.5.1-1.0.2.jar
