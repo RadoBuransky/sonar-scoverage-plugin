@@ -108,7 +108,7 @@ Source code markup with covered and uncovered lines:
 - [LatestPluginJar]: https://github.com/RadoBuransky/sonar-scoverage-plugin/releases/download/1.1.1/sonar-scoverage-plugin-1.1.1.jar
 - [Plugin102Jar]: https://github.com/RadoBuransky/sonar-scoverage-plugin/releases/download/1.0.2/sonar-scoverage-plugin-1.0.2.jar
 - [SonarQube]: http://www.sonarqube.org/ "SonarQube"
-- [sonar-scala] https://github.com/SonarCommunity/sonar-scala
+- [sonar-scala] https://github.com/arthepsy/sonar-scala/commits/sonar4x
 - [Scoverage]: https://github.com/scoverage/scalac-scoverage-plugin "Scoverage"
 - [sbt-scoverage]: https://github.com/scoverage/sbt-scoverage
 - [scoverage-maven-plugin]: https://github.com/scoverage/scoverage-maven-plugin
