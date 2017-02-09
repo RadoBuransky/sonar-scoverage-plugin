@@ -37,29 +37,29 @@ object BruteForceSequenceMatcher {
 /**
   * Helper that allows to convert a report path into a source folder relative path by testing it against
   * the tree of source files.
-  * 
+  *
   * Assumes that all report paths of a given report have a common root. Dependent of the scoverage
   * report this root is either something outside the actual project (absolute path), the base dir of the project
   * (report path relative to base dir) or some sub folder of the project.
-  * 
+  *
   * By reverse mapping a report path against the tree of all file children of the source folder the correct filesystem file
-  * can be found and the report path can be converted into a source dir relative path.  * 
-  * 
+  * can be found and the report path can be converted into a source dir relative path.  *
+  *
   * @author Michael Zinsmaier
   */
 class BruteForceSequenceMatcher(baseDir: File, sourcePath: String) extends PathSanitizer {
 
   private val sourceDir = initSourceDir()
-  require(sourceDir.isAbsolute)
-  require(sourceDir.isDirectory)
+  require(sourceDir.isAbsolute, s"$sourceDir is not absolute")
+  require(sourceDir.isDirectory, s"$sourceDir is not a directory")
 
   private val log = Loggers.get(classOf[BruteForceSequenceMatcher])
-  private val sourcePathLength = PathUtil.splitPath(sourceDir.getAbsolutePath).size  
+  private val sourcePathLength = PathUtil.splitPath(sourceDir.getAbsolutePath).size
   private val filesMap = initFilesMap()
-  
-  
+
+
   def getSourceRelativePath(reportPath: PathSeq): Option[PathSeq] = {
-    // match with file system map of files     
+    // match with file system map of files
     val relPathOption = for {
       absPathCandidates <- filesMap.get(reportPath.last)
       path <- absPathCandidates.find(absPath => absPath.endsWith(reportPath))
@@ -67,14 +67,14 @@ class BruteForceSequenceMatcher(baseDir: File, sourcePath: String) extends PathS
 
     relPathOption
   }
-  
+
   // mock able helpers that allow us to remove the dependency to the real file system during tests
-  
+
   private[pathcleaner] def initSourceDir(): File = {
     val sourceDir = new File(baseDir, sourcePath)
     sourceDir
   }
-  
+
   private[pathcleaner] def initFilesMap(): Map[String, Seq[PathSeq]] = {
     val srcFiles = FileUtils.iterateFiles(sourceDir, extensions, true)
     val paths = srcFiles.map(file => PathUtil.splitPath(file.getAbsolutePath)).toSeq
