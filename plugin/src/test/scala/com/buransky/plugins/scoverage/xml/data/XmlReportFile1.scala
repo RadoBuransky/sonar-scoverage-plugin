@@ -34,15 +34,18 @@ object XmlReportFile1 {
       |                        name="com.rr.test.sonar/MainClass/times" statement-count="1" statements-invoked="0" statement-rate="0.00" branch-rate="0.00">
       |                            <statements>
       |                                <statement
-      |                                package="com.rr.test.sonar" class="MainClass" class-type="Class" top-level-class="MainClass" source="/a1b2c3/workspace/sonar-test/src/main/scala/com/rr/test/sonar/MainClass.scala" method="times" start="161" end="162" line="14" branch="false" invocation-count="0">
+      |                                package="com.rr.test.sonar" class="MainClass" class-type="Class" top-level-class="MainClass" source="/a1b2c3/workspace/sonar-test/src/main/scala/com/rr/test/sonar/MainClass.scala" method="times" start="160" end="161" line="13" branch="false" invocation-count="0">
       |</statement>
-      |                            </statements>
+      |                                <statement
+      |                                package="com.rr.test.sonar" class="MainClass" class-type="Class" top-level-class="MainClass" source="/a1b2c3/workspace/sonar-test/src/main/scala/com/rr/test/sonar/MainClass.scala" method="times" start="161" end="162" line="14" branch="true" invocation-count="0">
+      |</statement>
+      |      |                            </statements>
       |</method>
       |                        <method
       |                        name="com.rr.test.sonar/MainClass/plus" statement-count="1" statements-invoked="1" statement-rate="100.00" branch-rate="100.00">
       |                            <statements>
       |                                <statement
-      |                                package="com.rr.test.sonar" class="MainClass" class-type="Class" top-level-class="MainClass" source="/a1b2c3/workspace/sonar-test/src/main/scala/com/rr/test/sonar/MainClass.scala" method="plus" start="132" end="133" line="12" branch="false" invocation-count="1">
+      |                                package="com.rr.test.sonar" class="MainClass" class-type="Class" top-level-class="MainClass" source="/a1b2c3/workspace/sonar-test/src/main/scala/com/rr/test/sonar/MainClass.scala" method="plus" start="132" end="133" line="12" branch="true" invocation-count="1">
       |</statement>
       |                            </statements>
       |</method>

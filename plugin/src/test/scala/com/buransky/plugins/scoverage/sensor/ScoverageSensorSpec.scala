@@ -23,21 +23,22 @@ import java.io.File
 import java.util
 
 import com.buransky.plugins.scoverage.language.Scala
-import com.buransky.plugins.scoverage.{FileStatementCoverage, DirectoryStatementCoverage, ProjectStatementCoverage, ScoverageReportParser}
+import com.buransky.plugins.scoverage.measure.ScalaMetrics
+import com.buransky.plugins.scoverage.{CoveredStatement, DirectoryStatementCoverage, FileStatementCoverage, ProjectStatementCoverage, ScoverageReportParser, StatementPosition}
 import org.junit.runner.RunWith
 import org.mockito.Mockito._
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
-import org.sonar.api.batch.fs.{FilePredicate, FilePredicates, FileSystem}
+import org.sonar.api.batch.fs.{FilePredicate, FilePredicates, FileSystem, InputFile}
 import org.sonar.api.config.Settings
 import org.sonar.api.resources.Project
-import org.sonar.api.resources.Project.AnalysisType
 import org.sonar.api.scan.filesystem.PathResolver
 
 import scala.collection.JavaConversions._
 import com.buransky.plugins.scoverage.pathcleaner.PathSanitizer
 import org.mockito.Matchers.any
+import org.sonar.api.measures.CoreMetrics
 
 
 @RunWith(classOf[JUnitRunner])
@@ -84,24 +85,49 @@ class ScoverageSensorSpec extends FlatSpec with Matchers with MockitoSugar {
           ))
         )),
         DirectoryStatementCoverage("x", List(
-          FileStatementCoverage("b.scala", 1, 0, Nil)
+          FileStatementCoverage("b.scala", 3, 2, Seq(
+            CoveredStatement(StatementPosition(20, 1), StatementPosition(20, 2), 0, true),
+            CoveredStatement(StatementPosition(20, 1), StatementPosition(20, 2), 1, true),
+            CoveredStatement(StatementPosition(21, 2), StatementPosition(21, 3), 1, false)
+          ))
         ))
       ))
     val reportFile = mock[java.io.File]
     val moduleBaseDir = mock[java.io.File]
     val filePredicates = mock[FilePredicates]
+    val inputFile = mock[InputFile]
+
     when(reportFile.exists).thenReturn(true)
     when(reportFile.isFile).thenReturn(true)
     when(reportFile.getAbsolutePath).thenReturn(reportAbsolutePath)
     when(settings.getString(SCOVERAGE_REPORT_PATH_PROPERTY)).thenReturn(pathToScoverageReport)
     when(fileSystem.baseDir).thenReturn(moduleBaseDir)
     when(fileSystem.predicates).thenReturn(filePredicates)
-    when(fileSystem.inputFiles(any[FilePredicate]())).thenReturn(Nil)
+    when(fileSystem.inputFile(any[FilePredicate]())).thenReturn(inputFile)
+    when(inputFile.relativePath()).thenReturn("InputFile")
     when(pathResolver.relativeFile(moduleBaseDir, pathToScoverageReport)).thenReturn(reportFile)
     when(scoverageReportParser.parse(any[String](), any[PathSanitizer]())).thenReturn(projectStatementCoverage)
 
     // Execute
     analyse(project, context)
+
+    val metricValues = Map(
+      ScalaMetrics.statementCoverage -> 66.7, 
+      ScalaMetrics.coveredStatements -> 2.0, 
+      ScalaMetrics.totalStatements -> 3.0,
+      CoreMetrics.LINES_TO_COVER -> 2.0,
+      CoreMetrics.UNCOVERED_LINES -> 1.0,
+      CoreMetrics.COVERAGE_LINE_HITS_DATA -> null,
+      CoreMetrics.CONDITIONS_TO_COVER -> 2.0,
+      CoreMetrics.UNCOVERED_CONDITIONS -> 1.0,
+      CoreMetrics.CONDITIONS_BY_LINE -> null,
+      CoreMetrics.COVERED_CONDITIONS_BY_LINE -> null
+    )
+    metricValues.foreach { case (metric, metricValue) => 
+      val measure = context.getMeasure(metric)
+      measure should not be null
+      measure.getValue shouldBe metricValue
+    }
   }
 
   class AnalyseScoverageSensorScope extends ScoverageSensorScope {

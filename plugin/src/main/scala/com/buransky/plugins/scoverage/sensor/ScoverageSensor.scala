@@ -207,7 +207,7 @@ class ScoverageSensor(settings: Settings, pathResolver: PathResolver, fileSystem
     context.saveMeasure(resource, createCoveredStatementCount(statementCoverage.coveredStatementsCount))
 
     log.debug(LogUtil.f("Save measures [" + statementCoverage.rate + ", " + statementCoverage.statementCount +
-      ", " + statementCoverage.coveredStatementsCount + ", " + resource.getKey + "]"))
+      ", " + statementCoverage.coveredStatementsCount + ", " + statementCoverage.branchRate + ", " + resource.getKey + "]"))
   }
 
   private def saveLineCoverage(coveredStatements: Iterable[CoveredStatement], resource: Resource,
@@ -217,8 +217,9 @@ class ScoverageSensor(settings: Settings, pathResolver: PathResolver, fileSystem
 
     // Set line hits
     val coverage = CoverageMeasuresBuilder.create()
-      coveredLines.foreach { coveredLine =>
+    coveredLines.foreach { coveredLine =>
       coverage.setHits(coveredLine.line, coveredLine.hitCount)
+      coverage.setConditions(coveredLine.line, coveredLine.conditions, coveredLine.coveredConditions)
     }
 
     // Save measures

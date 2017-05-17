@@ -35,15 +35,31 @@ sealed trait StatementCoverage {
     else
       (coveredStatementsCount.toDouble / statementCount.toDouble) * 100.0
 
+  lazy val branchRate: Double =
+    if (branchCount == 0)
+      0.0
+    else
+      (coveredBranchesCount.toDouble / branchCount.toDouble) * 100.0
+
   /**
    * Total number of all statements within the source code unit,
    */
   def statementCount: Int
 
   /**
+    * Total number of all branches within the source code unit,
+    */
+  def branchCount: Int
+
+  /**
    * Number of statements covered by unit tests.
    */
   def coveredStatementsCount: Int
+
+  /**
+    * Number of branches covered by unit tests.
+    */
+  def coveredBranchesCount: Int
 
   require(statementCount >= 0, "Statements count cannot be negative! [" + statementCount + "]")
   require(coveredStatementsCount >= 0, "Statements count cannot be negative! [" +
@@ -60,7 +76,9 @@ trait NodeStatementCoverage extends StatementCoverage {
   def name: String
   def children: Iterable[NodeStatementCoverage]
   def statementSum: Int = children.map(_.statementSum).sum
+  def branchesSum: Int = children.map(_.branchesSum).sum
   def coveredStatementsSum: Int = children.map(_.coveredStatementsSum).sum
+  def coveredBranchesSum: Int = children.map(_.coveredBranchesSum).sum
 }
 
 /**
@@ -72,6 +90,8 @@ case class ProjectStatementCoverage(name: String, children: Iterable[NodeStateme
   // projects' coverage values are defined as sums of their child values
   val statementCount = statementSum
   val coveredStatementsCount = coveredStatementsSum
+  val branchCount = branchesSum
+  val coveredBranchesCount = coveredBranchesSum
 }
 
 /**
@@ -82,6 +102,8 @@ case class DirectoryStatementCoverage(name: String, children: Iterable[NodeState
   // directories' coverage values are defined as sums of their DIRECT child values 
   val statementCount = children.filter(_.isInstanceOf[FileStatementCoverage]).map(_.statementCount).sum
   val coveredStatementsCount = children.filter(_.isInstanceOf[FileStatementCoverage]).map(_.coveredStatementsCount).sum
+  val branchCount = children.filter(_.isInstanceOf[FileStatementCoverage]).map(_.branchCount).sum
+  val coveredBranchesCount = children.filter(_.isInstanceOf[FileStatementCoverage]).map(_.coveredBranchesCount).sum
 }  
 
 /**
@@ -93,6 +115,8 @@ case class FileStatementCoverage(name: String, statementCount: Int, coveredState
   val children = List.empty[NodeStatementCoverage]
   override val statementSum = statementCount
   override val coveredStatementsSum = coveredStatementsCount
+  override val branchCount = statements.count(_.branch)
+  override val coveredBranchesCount = statements.count(s => s.branch && s.hitCount > 0)
 }
 
 /**
@@ -108,12 +132,12 @@ case class StatementPosition(line: Int, pos: Int)
  * @param hitCount How many times has the statement been hit by unit tests. Zero means
  *                 that the statement is not covered.
  */
-case class CoveredStatement(start: StatementPosition, end: StatementPosition, hitCount: Int)
+case class CoveredStatement(start: StatementPosition, end: StatementPosition, hitCount: Int, branch: Boolean)
 
 /**
  * Aggregated statement coverage for a given source code line.
  */
-case class CoveredLine(line: Int, hitCount: Int)
+case class CoveredLine(line: Int, hitCount: Int, conditions: Int, coveredConditions: Int)
 
 object StatementCoverage {
   /**
@@ -131,15 +155,15 @@ object StatementCoverage {
     val multilineStatements = statements.filter { s => s.start.line != s.end.line }
     val extraStatements = multilineStatements.flatMap { s =>
       for (i <- (s.start.line + 1) to s.end.line)
-        yield CoveredStatement(StatementPosition(i, 0), StatementPosition(i, 0), s.hitCount)
+        yield CoveredStatement(StatementPosition(i, 0), StatementPosition(i, 0), s.hitCount, s.branch)
     }
 
     // Group statements by starting line
     val lineStatements = (statements ++ extraStatements).groupBy(_.start.line)
 
     // Pessimistic approach: line hit count is a minimum of hit counts of all statements on the line
-    lineStatements.map { lineStatement =>
-      CoveredLine(lineStatement._1, lineStatement._2.map(_.hitCount).min)
+    lineStatements.map { case (line, lineStatement) =>
+      CoveredLine(line, lineStatement.map(_.hitCount).min, lineStatement.count(_.branch), lineStatement.count(s => s.branch && s.hitCount > 0))
     }
   }
 }
