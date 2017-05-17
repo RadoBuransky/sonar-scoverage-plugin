@@ -34,7 +34,7 @@ import org.sonar.api.batch.{AnalysisMode, Event, SensorContext}
 import org.sonar.api.config.Settings
 import org.sonar.api.design.Dependency
 import org.sonar.api.measures.{Measure, MeasuresFilter, Metric}
-import org.sonar.api.resources.{ProjectLink, Resource}
+import org.sonar.api.resources.{File, ProjectLink, Resource}
 import org.sonar.api.rules.Violation
 
 import scala.collection.mutable
@@ -93,7 +93,7 @@ class TestSensorContext extends SensorContext {
 
   override def getResource[R <: Resource](reference: R): R = ???
 
-  override def getResource(inputPath: InputPath): Resource = ???
+  override def getResource(inputPath: InputPath): Resource = new File(inputPath.relativePath())
 
   override def saveMeasure(measure: Measure[_ <: io.Serializable]): Measure[_ <: io.Serializable] = ???
 
@@ -102,7 +102,7 @@ class TestSensorContext extends SensorContext {
   override def saveMeasure(resource: Resource, metric: Metric[_ <: io.Serializable], value: Double): Measure[_ <: io.Serializable] = ???
 
   override def saveMeasure(resource: Resource, measure: Measure[_ <: io.Serializable]): Measure[_ <: io.Serializable] = {
-    measures.put(resource.getKey, measure)
+    measures.put(measure.getMetricKey, measure)
     measure
   }
 

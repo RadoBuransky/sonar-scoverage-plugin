@@ -51,18 +51,18 @@ class XmlScoverageReportConstructingParserSpec extends FlatSpec with Matchers {
         Some(path.drop(6))
       }      
     }    
-    assertReportFile(XmlReportFile1.scoverage104Data, 50.0, sanitizer) { projectCoverage =>
+    assertReportFile(XmlReportFile1.scoverage104Data, 33.33, sanitizer) { projectCoverage =>
       assert(projectCoverage.name === "")
-      assert(projectCoverage.children.size.toInt === 1)
+      assert(projectCoverage.children.size === 1)
 
       projectCoverage.children.head match {
         case rootDir: DirectoryStatementCoverage => { 
-          val rr = checkNode(rootDir, "com", 0, 0, 0.0).head
-          val test = checkNode(rr, "rr", 0, 0, 0.0).head
-          val sonar = checkNode(test, "test", 0, 0, 0.0).head
-          val mainClass = checkNode(sonar, "sonar", 2, 1, 50.0).head
+          val rr = checkNode(rootDir, "com", 0, 0, 0.0, 0d).head
+          val test = checkNode(rr, "rr", 0, 0, 0.0, 0d).head
+          val sonar = checkNode(test, "test", 0, 0, 0.0, 0d).head
+          val mainClass = checkNode(sonar, "sonar", 3, 1, 33.33, 50.0).head
       
-          checkNode(mainClass, "MainClass.scala", 2, 1, 50.0)
+          checkNode(mainClass, "MainClass.scala", 3, 1, 33.33, 50.0)
         }
         case other => fail(s"This is not a directory statement coverage! [$other]")
       }
@@ -121,11 +121,11 @@ class XmlScoverageReportConstructingParserSpec extends FlatSpec with Matchers {
     BigDecimal(real).setScale(2, BigDecimal.RoundingMode.HALF_UP).should(equal(BigDecimal(expected)))
   }
   
-  private def checkNode(node: NodeStatementCoverage, name: String, count: Int, covered: Int, rate: Double): Iterable[NodeStatementCoverage] = {
+  private def checkNode(node: NodeStatementCoverage, name: String, count: Int, covered: Int, rate: Double, branchRate: Double) = {
     node.name shouldEqual name
     node.statementCount shouldEqual count
     node.coveredStatementsCount shouldEqual covered
-    
+    checkRate(branchRate, node.branchRate)
     checkRate(rate, node.rate)
     
     node.children
