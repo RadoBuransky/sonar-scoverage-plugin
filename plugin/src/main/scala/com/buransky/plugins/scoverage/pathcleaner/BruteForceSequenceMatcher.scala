@@ -71,8 +71,12 @@ class BruteForceSequenceMatcher(baseDir: File, sourcePath: String) extends PathS
   // mock able helpers that allow us to remove the dependency to the real file system during tests
   
   private[pathcleaner] def initSourceDir(): File = {
-    val sourceDir = new File(baseDir, sourcePath)
-    sourceDir
+    val sourceDir = new File(sourcePath)
+    if (sourceDir.isAbsolute) {
+      sourceDir
+    } else {
+      new File(baseDir, sourcePath)
+    }
   }
   
   private[pathcleaner] def initFilesMap(): Map[String, Seq[PathSeq]] = {
