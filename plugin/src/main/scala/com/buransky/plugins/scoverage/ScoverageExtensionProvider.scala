@@ -2,12 +2,12 @@ package com.buransky.plugins.scoverage
 
 import com.buransky.plugins.scoverage.language.Scala
 import org.sonar.api.resources.Languages
-import org.sonar.api.{Extension, ExtensionProvider, ServerExtension}
+import org.sonar.api.{Extension, ExtensionProvider}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 
-class ScoverageExtensionProvider(languages: Languages) extends ExtensionProvider with ServerExtension {
+class ScoverageExtensionProvider(languages: Languages) extends ExtensionProvider {
   override def provide(): java.util.List[Class[_ <: Extension]] = {
     val result = ListBuffer[Class[_ <: Extension]]()
 
